@@ -100,7 +100,9 @@ struct ListScreen: View {
             .padding(.horizontal, 10)
             .padding(.vertical, 6)
         }
-        .onAppear { searchFocused = true }
+        .onAppear {
+            DispatchQueue.main.async { searchFocused = true }
+        }
         .onChange(of: model.focusToken) { _ in searchFocused = true }
     }
 }

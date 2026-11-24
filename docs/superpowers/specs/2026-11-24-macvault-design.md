@@ -41,8 +41,9 @@ Target machine: the user's Mac Mini (Apple silicon), current macOS.
   with `./build.sh`; Xcode (or its Command Line Tools) must be installed.
 - No paid Apple developer account: the app is ad-hoc signed. Because of this
   it uses the file-based login keychain (not the data-protection keychain,
-  which needs a team-signed entitlement). After a rebuild macOS may ask once
-  for keychain access; the user clicks **Always Allow**.
+  which needs a team-signed entitlement). After a rebuild macOS asks once per
+  login for keychain access (**Always Allow**); signing with a self-signed
+  code-signing certificate (`MACVAULT_SIGN_IDENTITY`) avoids this.
 - The development container is Linux, so the app is compiled and tested on
   the user's Mac.
 

@@ -16,7 +16,8 @@ public struct DispatchScheduler: Scheduler {
     public init() {}
 
     public func schedule(after seconds: TimeInterval, _ action: @escaping () -> Void) {
-        DispatchQueue.main.asyncAfter(deadline: .now() + seconds, execute: action)
+        // Wall-clock deadline so time spent asleep still counts.
+        DispatchQueue.main.asyncAfter(wallDeadline: .now() + seconds, execute: action)
     }
 }
 

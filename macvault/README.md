@@ -43,10 +43,21 @@ once.
 
 ### Keychain prompts after rebuilding
 
-The app is signed ad-hoc, so each rebuild looks like a "new" app to the
-Keychain. The first time a rebuilt MacVault reads a password, macOS asks
-"MacVault wants to use your confidential information stored in … keychain".
-Enter your Mac password and click **Always Allow**.
+By default the app is signed ad-hoc, so each rebuild looks like a "new" app
+to the Keychain. After a rebuild, the first copy of **each** login makes
+macOS ask "MacVault wants to use your confidential information stored in …
+keychain". Enter your Mac password and click **Always Allow**. That's once per
+login per rebuild; if you never rebuild, you never see it again.
+
+To avoid this, sign with a stable self-made certificate (one-time setup):
+
+1. Keychain Access → menu **Keychain Access → Certificate Assistant → Create a
+   Certificate…**
+2. Name: `MacVault Local`, Identity Type: Self-Signed Root, Certificate Type:
+   **Code Signing** → Create.
+3. Build with `MACVAULT_SIGN_IDENTITY="MacVault Local" ./build.sh`
+
+You'll be asked once per login one last time; after that, rebuilds keep access.
 
 ### Where the data lives
 
@@ -72,6 +83,8 @@ swift test
 - [ ] Copy password → Touch ID / password prompt → paste shows the password; popover closes.
 - [ ] Copy another password within 5 minutes → no prompt.
 - [ ] Wait 30 s after copying a password → clipboard is empty.
+- [ ] After copying with ⌥⌘P → Return, ⌘V in the app you were in pastes immediately.
+- [ ] ⌘V / ⌘C / ⌘A work inside MacVault's text fields.
 - [ ] Copy a password, then copy other text within 30 s → that other text is still there after 30 s.
 - [ ] Type part of a name and press Return → top match's password is copied.
 - [ ] Edit → password shows "Unchanged" → change only the name → Save → password still copies correctly.

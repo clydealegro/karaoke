@@ -35,18 +35,30 @@ final class VaultViewModel: ObservableObject {
         LoginFilter.filter(logins, query: query)
     }
 
+    /// Resets the list for a fresh search, but keeps an open editor so a
+    /// popover closed by a system prompt doesn't throw away unsaved edits.
     func prepareForShow() {
-        query = ""
-        screen = .list
+        if screen == .list {
+            query = ""
+        }
         reload()
+    }
+
+    func requestSearchFocus() {
         focusToken += 1
+    }
+
+    private func report(_ error: Error) {
+        // The user dismissed a keychain prompt themselves: nothing to say.
+        if (error as? LoginStoreError) == .cancelled { return }
+        banner = error.localizedDescription
     }
 
     func reload() {
         do {
             logins = try store.list()
         } catch {
-            banner = error.localizedDescription
+            report(error)
         }
     }
 
@@ -66,7 +78,7 @@ final class VaultViewModel: ObservableObject {
             try? await Task.sleep(nanoseconds: 600_000_000)
             onCopiedPassword()
         } catch {
-            banner = error.localizedDescription
+            report(error)
         }
     }
 
@@ -83,7 +95,7 @@ final class VaultViewModel: ObservableObject {
         do {
             return try store.password(for: login.id)
         } catch {
-            banner = error.localizedDescription
+            report(error)
             return nil
         }
     }
@@ -95,7 +107,7 @@ final class VaultViewModel: ObservableObject {
             reload()
             screen = .list
         } catch {
-            banner = error.localizedDescription
+            report(error)
         }
     }
 
@@ -106,7 +118,7 @@ final class VaultViewModel: ObservableObject {
             reload()
             screen = .list
         } catch {
-            banner = error.localizedDescription
+            report(error)
         }
     }
 

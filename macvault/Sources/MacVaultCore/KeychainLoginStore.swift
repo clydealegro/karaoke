@@ -102,6 +102,7 @@ public final class KeychainLoginStore: LoginStore {
 
     private func check(_ status: OSStatus) throws {
         guard status != errSecSuccess else { return }
+        if status == errSecUserCanceled { throw LoginStoreError.cancelled }
         let message = SecCopyErrorMessageString(status, nil) as String? ?? "OSStatus \(status)"
         throw LoginStoreError.keychain(status: status, message: message)
     }

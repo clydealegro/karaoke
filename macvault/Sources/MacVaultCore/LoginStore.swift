@@ -2,12 +2,15 @@ import Foundation
 
 public enum LoginStoreError: Error, Equatable, LocalizedError {
     case notFound
+    /// The user dismissed a keychain access prompt.
+    case cancelled
     case invalidInput(String)
     case keychain(status: Int32, message: String)
 
     public var errorDescription: String? {
         switch self {
         case .notFound: return "That login no longer exists."
+        case .cancelled: return "Cancelled."
         case .invalidInput(let message): return message
         case .keychain(_, let message): return "Keychain error: \(message)"
         }

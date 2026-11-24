@@ -12,8 +12,10 @@ mkdir -p "$APP/Contents/MacOS" "$APP/Contents/Resources"
 cp "$BIN_DIR/MacVault" "$APP/Contents/MacOS/MacVault"
 cp Resources/Info.plist "$APP/Contents/Info.plist"
 
-# Ad-hoc signature: no Apple developer account needed.
-codesign --force --sign - --identifier local.macvault.app "$APP"
+# Default is an ad-hoc signature (no Apple developer account needed). Set
+# MACVAULT_SIGN_IDENTITY to a self-signed code-signing certificate's name to
+# keep Keychain "Always Allow" working across rebuilds (see README).
+codesign --force --sign "${MACVAULT_SIGN_IDENTITY:--}" --identifier local.macvault.app "$APP"
 
 echo "Built $(pwd)/$APP"
 echo "Install with:  cp -R \"$(pwd)/$APP\" /Applications/ && open /Applications/MacVault.app"
