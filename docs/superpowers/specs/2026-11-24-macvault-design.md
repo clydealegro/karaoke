@@ -58,10 +58,10 @@ Two targets in one Swift package at `macvault/`:
 | `LoginStore` protocol | `list() -> [Login]`, `password(for:) -> String`, `save(_:password:)`, `delete(id:)`. |
 | `KeychainLoginStore` | `LoginStore` on the login keychain. One `kSecClassGenericPassword` item per login: service `MacVault`, account = UUID string, label = `MacVault: <title>`, `kSecAttrGeneric` = JSON of the `Login` metadata, value data = UTF-8 password. `list()` asks for attributes only, never data. |
 | `InMemoryLoginStore` | `LoginStore` for tests and previews. |
-| `PasswordGenerator` | Uses `SecRandomCopyBytes` via an injectable random source. Guarantees at least one character from each enabled class; excludes look-alikes `0 O l 1 I`. |
+| `PasswordGenerator` | Uses the system CSPRNG (`SystemRandomNumberGenerator`); a seeded generator can be injected for tests. Guarantees at least one character from each enabled class; excludes look-alikes `0 O l 1 I`. |
 | `LoginFilter` | Case-insensitive search over title, username and website; ranks title-prefix matches first, then other matches, alphabetical within each group. |
 | `ClipboardGuard` | Writes a string to a `Pasteboard` protocol, remembers the change count, and after a delay clears it only if the change count is unchanged. Marks the item with `org.nspasteboard.ConcealedType` and `org.nspasteboard.TransientType`. Clock/scheduler is injectable for tests. |
-| `AuthGate` | Tracks "last successful authentication" time; `needsAuthentication(now:)` is true when more than 5 minutes have passed. The actual prompt is supplied by the app via a closure. |
+| `AuthGate` | Tracks "last successful authentication" time; `needsAuthentication()` is true when more than 5 minutes have passed (clock injectable). The actual prompt comes from an `Authenticator` protocol the app implements. |
 
 ### 4.2 `MacVault` (executable app)
 
